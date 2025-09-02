@@ -1,4 +1,4 @@
-import React, { useState, useMemo, ChangeEvent } from "react";
+import React, { useState, useMemo } from "react";
 import {
   CardContent,
   CardActions,
@@ -6,7 +6,6 @@ import {
   TextField,
   Box,
   Typography,
- 
   Paper,
   Chip,
   FormLabel,
@@ -16,33 +15,13 @@ import {
   Backdrop,
   Snackbar,
   Alert,
-  AlertTitle,
-  AlertColor
+  AlertTitle
 } from "@mui/material";
-import { GridLegacy as Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { Save, Person, LocalOffer, CheckCircle } from "@mui/icons-material";
 
-// Define types for our form data
-interface FormData {
-  nombre: string;
-  telefono: string;
-  rut: string;
-  email: string;
-  tipo_prenda: string;
-  talla: string;
-  estado: string;
-  observaciones: string;
-}
-
-// Define types for our alert state
-interface AlertState {
-  open: boolean;
-  message: string;
-  severity: AlertColor;
-}
-
 const Home = () => {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState({
     nombre: "",
     telefono: "",
     rut: "",
@@ -53,15 +32,15 @@ const Home = () => {
     observaciones: "",
   });
 
-  const [alert, setAlert] = useState<AlertState>({
+  const [alert, setAlert] = useState({
     open: false,
     message: "",
     severity: "success",
   });
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const GARMENT_TYPES: string[] = [
+  const GARMENT_TYPES = [
     "Camisa",
     "Pantalón",
     "Vestido",
@@ -78,10 +57,10 @@ const Home = () => {
     "Lonchera",
   ];
 
-  const SIZES: string[] = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
-  const CONDITIONS: string[] = ["Excelente", "Bueno", "Regular", "Dañado"];
+  const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+  const CONDITIONS = ["Excelente", "Bueno", "Regular", "Dañado"];
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -185,11 +164,11 @@ const Home = () => {
     }
   };
 
-  const showAlert = (message: string, severity: AlertColor) => {
+  const showAlert = (message, severity) => {
     setAlert({ open: true, message, severity });
   };
 
-  const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+  const handleCloseAlert = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -257,7 +236,7 @@ const Home = () => {
                     fullWidth
                     label="Nombre Completo"
                     value={formData.nombre}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    onChange={(e) =>
                       handleInputChange("nombre", e.target.value)
                     }
                     required
@@ -273,7 +252,7 @@ const Home = () => {
                     fullWidth
                     label="RUT"
                     value={formData.rut}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("rut", e.target.value)}
+                    onChange={(e) => handleInputChange("rut", e.target.value)}
                     required
                     variant="outlined"
                     sx={uniformInputStyles}
@@ -289,7 +268,7 @@ const Home = () => {
                     required
                     label="Teléfono"
                     value={formData.telefono}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    onChange={(e) =>
                       handleInputChange("telefono", e.target.value)
                     }
                     placeholder="+56 9 1234 5678"
@@ -308,7 +287,7 @@ const Home = () => {
                     label="Correo Electrónico"
                     type="email"
                     value={formData.email}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("email", e.target.value)}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
                     placeholder="ejemplo@correo.com"
                     variant="outlined"
                     sx={uniformInputStyles}
@@ -467,7 +446,7 @@ const Home = () => {
                   </FormLabel>
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                     {CONDITIONS.map((condition, index) => {
-                      const colors = ["success", "info", "warning", "error"] as const;
+                      const colors = ["success", "info", "warning", "error"];
                       const isSelected = formData.estado === condition;
 
                       return (
@@ -510,7 +489,7 @@ const Home = () => {
                     multiline
                     rows={4}
                     value={formData.observaciones}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    onChange={(e) =>
                       handleInputChange("observaciones", e.target.value)
                     }
                     placeholder="Detalles adicionales, daños, reparaciones necesarias, etc."

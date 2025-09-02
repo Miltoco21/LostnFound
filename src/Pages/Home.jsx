@@ -1,14 +1,12 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, ChangeEvent } from "react";
 import {
-  Card,
   CardContent,
   CardActions,
   Button,
   TextField,
   Box,
   Typography,
-  Grid,
-  Alert,
+ 
   Paper,
   Chip,
   FormLabel,
@@ -17,12 +15,34 @@ import {
   CircularProgress,
   Backdrop,
   Snackbar,
-  AlertTitle
+  Alert,
+  AlertTitle,
+  AlertColor
 } from "@mui/material";
+import { GridLegacy as Grid } from '@mui/material';
 import { Save, Person, LocalOffer, CheckCircle } from "@mui/icons-material";
 
+// Define types for our form data
+interface FormData {
+  nombre: string;
+  telefono: string;
+  rut: string;
+  email: string;
+  tipo_prenda: string;
+  talla: string;
+  estado: string;
+  observaciones: string;
+}
+
+// Define types for our alert state
+interface AlertState {
+  open: boolean;
+  message: string;
+  severity: AlertColor;
+}
+
 const Home = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     nombre: "",
     telefono: "",
     rut: "",
@@ -33,16 +53,15 @@ const Home = () => {
     observaciones: "",
   });
 
-  // Cambiamos el estado de alert para usar Snackbar
-  const [alert, setAlert] = useState({
+  const [alert, setAlert] = useState<AlertState>({
     open: false,
     message: "",
     severity: "success",
   });
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const GARMENT_TYPES = [
+  const GARMENT_TYPES: string[] = [
     "Camisa",
     "Pantalón",
     "Vestido",
@@ -59,10 +78,10 @@ const Home = () => {
     "Lonchera",
   ];
 
-  const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
-  const CONDITIONS = ["Excelente", "Bueno", "Regular", "Dañado"];
+  const SIZES: string[] = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+  const CONDITIONS: string[] = ["Excelente", "Bueno", "Regular", "Dañado"];
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -156,21 +175,21 @@ const Home = () => {
 
     } catch (error) {
       console.error("💥 Error de conexión completo:", error);
-      if (error.message.includes("Failed to fetch")) {
+      if (error instanceof Error && error.message.includes("Failed to fetch")) {
         showAlert("Error: No se puede conectar al servidor. Verifique que esté ejecutándose en localhost:8000", "error");
       } else {
-        showAlert(`Error de conexión: ${error.message}`, "error");
+        showAlert(`Error de conexión: ${error instanceof Error ? error.message : String(error)}`, "error");
       }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const showAlert = (message, severity) => {
+  const showAlert = (message: string, severity: AlertColor) => {
     setAlert({ open: true, message, severity });
   };
 
-  const handleCloseAlert = (event, reason) => {
+  const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -238,7 +257,7 @@ const Home = () => {
                     fullWidth
                     label="Nombre Completo"
                     value={formData.nombre}
-                    onChange={(e) =>
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       handleInputChange("nombre", e.target.value)
                     }
                     required
@@ -254,7 +273,7 @@ const Home = () => {
                     fullWidth
                     label="RUT"
                     value={formData.rut}
-                    onChange={(e) => handleInputChange("rut", e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("rut", e.target.value)}
                     required
                     variant="outlined"
                     sx={uniformInputStyles}
@@ -270,7 +289,7 @@ const Home = () => {
                     required
                     label="Teléfono"
                     value={formData.telefono}
-                    onChange={(e) =>
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       handleInputChange("telefono", e.target.value)
                     }
                     placeholder="+56 9 1234 5678"
@@ -289,7 +308,7 @@ const Home = () => {
                     label="Correo Electrónico"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("email", e.target.value)}
                     placeholder="ejemplo@correo.com"
                     variant="outlined"
                     sx={uniformInputStyles}
@@ -344,7 +363,7 @@ const Home = () => {
                         onClick={() => !isLoading && handleInputChange("tipo_prenda", type)}
                         variant={formData.tipo_prenda === type ? "filled" : "outlined"}
                         color={formData.tipo_prenda === type ? "primary" : "default"}
-                        icon={formData.tipo_prenda === type ? <CheckCircle /> : null}
+                        icon={formData.tipo_prenda === type ? <CheckCircle /> : undefined}
                         disabled={isLoading}
                         sx={{
                           height: "40px",
@@ -448,7 +467,7 @@ const Home = () => {
                   </FormLabel>
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                     {CONDITIONS.map((condition, index) => {
-                      const colors = ["success", "info", "warning", "error"];
+                      const colors = ["success", "info", "warning", "error"] as const;
                       const isSelected = formData.estado === condition;
 
                       return (
@@ -461,7 +480,7 @@ const Home = () => {
                           }
                           variant={isSelected ? "filled" : "outlined"}
                           color={isSelected ? colors[index] : "default"}
-                          icon={isSelected ? <CheckCircle /> : null}
+                          icon={isSelected ? <CheckCircle /> : undefined}
                           disabled={isLoading}
                           sx={{
                             height: "40px",
@@ -491,7 +510,7 @@ const Home = () => {
                     multiline
                     rows={4}
                     value={formData.observaciones}
-                    onChange={(e) =>
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       handleInputChange("observaciones", e.target.value)
                     }
                     placeholder="Detalles adicionales, daños, reparaciones necesarias, etc."

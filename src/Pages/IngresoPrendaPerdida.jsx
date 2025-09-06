@@ -35,7 +35,6 @@ import {
 import { Save, Person, LocalOffer, CheckCircle, Search, Clear, Check, Close } from "@mui/icons-material";
 
 const IngresoPrendaPerdida = () => {
-  const API_BASE_URL = import.meta.env.VITE_URL_API;
   // Sistema de alertas mejorado (consistente con Home)
   const [alert, setAlert] = useState({
     open: false,
@@ -79,7 +78,10 @@ const IngresoPrendaPerdida = () => {
     try {
       console.log("🔍 Buscando prendas para RUT:", searchRut);
       
-      const response = await axios.get(`http://localhost:8080/prendas`, {
+      const API_BASE_URL = import.meta.env.VITE_URL_API;
+      const url = `${API_BASE_URL}/prendas`;
+      
+      const response = await axios.get(url, {
         params: {
           rut: searchRut
         }
@@ -99,13 +101,10 @@ const IngresoPrendaPerdida = () => {
       console.error("💥 Error en la búsqueda:", error);
       
       if (error.response) {
-        // El servidor respondió con un código de error
         showAlert(`Error en la búsqueda: ${error.response.status}`, "error");
       } else if (error.request) {
-        // La petición fue hecha pero no se recibió respuesta
         showAlert("Error al realizar la búsqueda. Verifique la conexión con el servidor.", "error");
       } else {
-        // Error al configurar la petición
         showAlert("Error inesperado en la configuración de la búsqueda", "error");
       }
       

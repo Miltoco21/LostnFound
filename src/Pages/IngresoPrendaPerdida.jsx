@@ -35,6 +35,7 @@ import {
 import { Save, Person, LocalOffer, CheckCircle, Search, Clear, Check, Close } from "@mui/icons-material";
 
 const IngresoPrendaPerdida = () => {
+  const API_BASE_URL = import.meta.env.VITE_URL_API;
   // Sistema de alertas mejorado (consistente con Home)
   const [alert, setAlert] = useState({
     open: false,
@@ -78,27 +79,36 @@ const IngresoPrendaPerdida = () => {
     try {
       console.log("🔍 Buscando prendas para RUT:", searchRut);
       
-      const response = await fetch(`http://localhost:8000/prendas?rut=${encodeURIComponent(searchRut)}`);
+      const response = await axios.get(`http://localhost:8080/prendas`, {
+        params: {
+          rut: searchRut
+        }
+      });
       
       console.log("📡 Respuesta de búsqueda recibida:", response.status, response.statusText);
+      console.log("📊 Resultados de búsqueda:", response.data);
       
-      if (!response.ok) {
-        throw new Error(`Error en la búsqueda: ${response.status}`);
-      }
+      setSearchResults(Array.isArray(response.data) ? response.data : []);
       
-      const result = await response.json();
-      console.log("📊 Resultados de búsqueda:", result);
-      
-      setSearchResults(Array.isArray(result) ? result : []);
-      
-      if (Array.isArray(result) && result.length === 0) {
+      if (Array.isArray(response.data) && response.data.length === 0) {
         showAlert("No se encontraron prendas para el RUT especificado", "info");
-      } else if (Array.isArray(result) && result.length > 0) {
-        showAlert(`Se encontraron ${result.length} prenda(s) para el RUT ${searchRut}`, "success");
+      } else if (Array.isArray(response.data) && response.data.length > 0) {
+        showAlert(`Se encontraron ${response.data.length} prenda(s) para el RUT ${searchRut}`, "success");
       }
     } catch (error) {
       console.error("💥 Error en la búsqueda:", error);
-      showAlert("Error al realizar la búsqueda. Verifique la conexión con el servidor.", "error");
+      
+      if (error.response) {
+        // El servidor respondió con un código de error
+        showAlert(`Error en la búsqueda: ${error.response.status}`, "error");
+      } else if (error.request) {
+        // La petición fue hecha pero no se recibió respuesta
+        showAlert("Error al realizar la búsqueda. Verifique la conexión con el servidor.", "error");
+      } else {
+        // Error al configurar la petición
+        showAlert("Error inesperado en la configuración de la búsqueda", "error");
+      }
+      
       setSearchResults([]);
     } finally {
       setSearchLoading(false);
@@ -140,7 +150,7 @@ const IngresoPrendaPerdida = () => {
     try {
       console.log("🔄 Actualizando estado de prenda ID:", selectedGarment.id, "a:", returnStatus);
       
-      const response = await fetch(`http://localhost:8000/prendas/${selectedGarment.id}/estado`, {
+      const response = await fetch(`http://localhost:8080/prendas/${selectedGarment.id}/estado`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

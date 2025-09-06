@@ -98,11 +98,11 @@ const Home = () => {
         observaciones: formData.observaciones.trim()
       };
 
-      console.log("🚀 Enviando datos a:", 'http://localhost:8000/prendas');
+      console.log("🚀 Enviando datos a:", 'http://localhost:8080/prendas');
       console.log("📦 Datos:", dataToSend);
 
       // Realizar la petición POST a tu API
-      const response = await fetch('http://localhost:8000/prendas', {
+      const response = await fetch('http://localhost:8080/prendas', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

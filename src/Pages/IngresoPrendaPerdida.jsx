@@ -77,7 +77,7 @@ const IngresoPrendaPerdida = () => {
     setSearchPerformed(true);
   
     // Usar tu variable de entorno actual de Vite
-    const API_BASE_URL = import.meta.env.VITE_URL_API || 'https://lostandfoundapi-kfe8.onrender.com/';
+    const API_BASE_URL =  'https://lostandfoundapi-kfe8.onrender.com/';
     
     // Asegurar que no haya doble slash
     const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;

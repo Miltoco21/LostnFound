@@ -33,7 +33,7 @@ import {
   Backdrop
 } from "@mui/material";
 import { Save, Person, LocalOffer, CheckCircle, Search, Clear, Check, Close } from "@mui/icons-material";
-
+import axios from "axios"
 const IngresoPrendaPerdida = () => {
   const API_BASE_URL = import.meta.env.VITE_URL_API;
   // Sistema de alertas mejorado (consistente con Home)

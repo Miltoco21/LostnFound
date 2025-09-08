@@ -14,8 +14,9 @@ function App() {
     <Navbar />
       {/* Opcional: Agrega un componente de navegación aquí */}
       <Routes>
+      <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/busqueda" element={<IngresoPrendaPerdida />} />  {/* Nueva ruta */}
+        <Route path="/busqueda" element={<IngresoPrendaPerdida />} /> 
       </Routes>
     </div>
   </Router>

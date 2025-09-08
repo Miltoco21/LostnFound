@@ -21,6 +21,7 @@ import { Grid } from '@mui/material';
 import { Save, Person, LocalOffer, CheckCircle } from "@mui/icons-material";
 
 const Home = () => {
+  const API_BASE_URL = import.meta.env.VITE_URL_API;
   const [formData, setFormData] = useState({
     nombre: "",
     telefono: "",
@@ -98,11 +99,15 @@ const Home = () => {
         observaciones: formData.observaciones.trim()
       };
 
-      console.log("🚀 Enviando datos a:", 'http://localhost:8080/prendas');
+
       console.log("📦 Datos:", dataToSend);
+      const API_BASE_URL =  'https://lostandfoundapi-kfe8.onrender.com/';
+    
+      // Asegurar que no haya doble slash
+      const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
 
       // Realizar la petición POST a tu API
-      const response = await fetch('http://localhost:8080/prendas', {
+      const response = await fetch(`${baseUrl}/prendas`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

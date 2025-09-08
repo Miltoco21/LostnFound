@@ -182,73 +182,139 @@ const IngresoPrendaPerdida = () => {
     setUpdateLoading(false);
   };
 
-  // Función mejorada para confirmar el cambio de estado
-  const handleConfirmReturn = async () => {
-    if (!selectedGarment || !returnStatus) {
-      showAlert("Por favor seleccione un estado válido", "warning");
-      return;
-    }
+  // // Función mejorada para confirmar el cambio de estado
+  // const handleConfirmReturn = async () => {
+  //   if (!selectedGarment || !returnStatus) {
+  //     showAlert("Por favor seleccione un estado válido", "warning");
+  //     return;
+  //   }
     
-    setUpdateLoading(true);
+  //   setUpdateLoading(true);
 
-    const API_BASE_URL =  'https://lostandfoundapi-kfe8.onrender.com/';
+  //   const API_BASE_URL =  'https://lostandfoundapi-kfe8.onrender.com/';
     
-    // Asegurar que no haya doble slash
+  //   // Asegurar que no haya doble slash
+  //   const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+    
+  //   try {
+  //     console.log("🔄 Actualizando estado de prenda ID:", selectedGarment.id, "a:", returnStatus);
+      
+  //     const response = await fetch(`${baseUrl}/prendas/${selectedGarment.id}/estado`, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ 
+  //         estado_devolucion: returnStatus
+  //       })
+  //     });
+
+  //     const responseData = await response.json();
+  //     console.log("📡 Respuesta de actualización:", response.status, responseData);
+
+  //     if (response.ok) {
+  //       // Actualizar el estado local
+  //       setSearchResults(prev => 
+  //         prev.map(item => 
+  //           item.id === selectedGarment.id 
+  //             ? { ...item, estado_devolucion: returnStatus } 
+  //             : item
+  //         )
+  //       );
+        
+  //       // Mensaje de éxito mejorado
+  //       const mensajeExito = `¡Estado actualizado con éxito! 
+  //       Prenda ID ${selectedGarment.id} (${selectedGarment.tipo_prenda}) 
+  //       cambió a: "${returnStatus}"`;
+        
+  //       showAlert(mensajeExito, "success");
+        
+  //       // Cerrar el diálogo después de un breve delay para mostrar el éxito
+  //       setTimeout(() => {
+  //         handleCloseReturnDialog();
+  //       }, 500);
+        
+  //     } else {
+  //       console.error("❌ Error del servidor:", response.status, responseData);
+  //       showAlert(responseData.message || "Error al actualizar el estado de la prenda", "error");
+  //     }
+  //   } catch (error) {
+  //     console.error("💥 Error al actualizar:", error);
+  //     if (error.message.includes("Failed to fetch")) {
+  //       showAlert("Error: No se puede conectar al servidor. Verifique que esté ejecutándose.", "error");
+  //     } else {
+  //       showAlert(`Error de conexión: ${error.message}`, "error");
+  //     }
+  //   } finally {
+  //     setUpdateLoading(false);
+  //   }
+  // };
+  // Función mejorada para confirmar el cambio de estado
+const handleConfirmReturn = async () => {
+  if (!selectedGarment || !returnStatus) {
+    showAlert("Por favor seleccione un estado válido", "warning");
+    return;
+  }
+  
+  setUpdateLoading(true);
+  
+  try {
+    console.log("🔄 Actualizando estado de prenda ID:", selectedGarment.id, "a:", returnStatus);
+    
+    // Usar la misma URL base dinámica que en handleSearch
     const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
     
-    try {
-      console.log("🔄 Actualizando estado de prenda ID:", selectedGarment.id, "a:", returnStatus);
+    const response = await fetch(`${baseUrl}/prendas/${selectedGarment.id}/estado`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        estado_devolucion: returnStatus
+      })
+    });
+
+    // ... el resto del código permanece igual ...
+    const responseData = await response.json();
+    console.log("📡 Respuesta de actualización:", response.status, responseData);
+
+    if (response.ok) {
+      // Actualizar el estado local
+      setSearchResults(prev => 
+        prev.map(item => 
+          item.id === selectedGarment.id 
+            ? { ...item, estado_devolucion: returnStatus } 
+            : item
+        )
+      );
       
-      const response = await fetch(`${baseUrl}/prendas/${selectedGarment.id}/estado`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          estado_devolucion: returnStatus
-        })
-      });
-
-      const responseData = await response.json();
-      console.log("📡 Respuesta de actualización:", response.status, responseData);
-
-      if (response.ok) {
-        // Actualizar el estado local
-        setSearchResults(prev => 
-          prev.map(item => 
-            item.id === selectedGarment.id 
-              ? { ...item, estado_devolucion: returnStatus } 
-              : item
-          )
-        );
-        
-        // Mensaje de éxito mejorado
-        const mensajeExito = `¡Estado actualizado con éxito! 
-        Prenda ID ${selectedGarment.id} (${selectedGarment.tipo_prenda}) 
-        cambió a: "${returnStatus}"`;
-        
-        showAlert(mensajeExito, "success");
-        
-        // Cerrar el diálogo después de un breve delay para mostrar el éxito
-        setTimeout(() => {
-          handleCloseReturnDialog();
-        }, 500);
-        
-      } else {
-        console.error("❌ Error del servidor:", response.status, responseData);
-        showAlert(responseData.message || "Error al actualizar el estado de la prenda", "error");
-      }
-    } catch (error) {
-      console.error("💥 Error al actualizar:", error);
-      if (error.message.includes("Failed to fetch")) {
-        showAlert("Error: No se puede conectar al servidor. Verifique que esté ejecutándose.", "error");
-      } else {
-        showAlert(`Error de conexión: ${error.message}`, "error");
-      }
-    } finally {
-      setUpdateLoading(false);
+      // Mensaje de éxito mejorado
+      const mensajeExito = `¡Estado actualizado con éxito! 
+      Prenda ID ${selectedGarment.id} (${selectedGarment.tipo_prenda}) 
+      cambió a: "${returnStatus}"`;
+      
+      showAlert(mensajeExito, "success");
+      
+      // Cerrar el diálogo después de un breve delay para mostrar el éxito
+      setTimeout(() => {
+        handleCloseReturnDialog();
+      }, 500);
+      
+    } else {
+      console.error("❌ Error del servidor:", response.status, responseData);
+      showAlert(responseData.message || "Error al actualizar el estado de la prenda", "error");
     }
-  };
+  } catch (error) {
+    console.error("💥 Error al actualizar:", error);
+    if (error.message.includes("Failed to fetch")) {
+      showAlert("Error: No se puede conectar al servidor. Verifique que esté ejecutándose.", "error");
+    } else {
+      showAlert(`Error de conexión: ${error.message}`, "error");
+    }
+  } finally {
+    setUpdateLoading(false);
+  }
+};
 
   // Sistema de alertas mejorado (consistente con Home)
   const showAlert = (message, severity) => {

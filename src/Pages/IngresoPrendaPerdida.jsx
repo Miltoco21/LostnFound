@@ -260,7 +260,7 @@ const handleConfirmReturn = async () => {
   
   try {
     console.log("🔄 Actualizando estado de prenda ID:", selectedGarment.id, "a:", returnStatus);
-    
+    const API_BASE_URL =  'https://lostandfoundapi-kfe8.onrender.com/';
     // Usar la misma URL base dinámica que en handleSearch
     const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
     

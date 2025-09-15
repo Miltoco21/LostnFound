@@ -368,7 +368,7 @@ const handleConfirmReturn = async () => {
           <Paper elevation={6} sx={{ borderRadius: 3, overflow: "hidden", mb: 4 }}>
             <Box
               sx={{
-                backgroundColor: "#2e7d32",
+                backgroundColor: "#1976d2",
                 color: "white",
                 p: 3,
                 display: "flex",
@@ -393,7 +393,7 @@ const handleConfirmReturn = async () => {
                     variant="outlined"
                     sx={uniformInputStyles}
                     disabled={searchLoading}
-                    placeholder="Ej: 12.345.678-9"
+                    placeholder=" 12345678-9"
                     InputProps={{
                       endAdornment: searchRut && (
                         <InputAdornment position="end">
@@ -436,7 +436,7 @@ const handleConfirmReturn = async () => {
             <Paper elevation={6} sx={{ borderRadius: 3, overflow: "hidden", mb: 4 }}>
               <Box
                 sx={{
-                  backgroundColor: "#ed6c02",
+                  backgroundColor: "#1976d2",
                   color: "white",
                   p: 3,
                   display: "flex",

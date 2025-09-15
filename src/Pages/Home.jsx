@@ -15,9 +15,9 @@ import {
   Backdrop,
   Snackbar,
   Alert,
-  AlertTitle
+  AlertTitle,
 } from "@mui/material";
-import { Grid } from '@mui/material';
+import { Grid } from "@mui/material";
 import { Save, Person, LocalOffer, CheckCircle } from "@mui/icons-material";
 
 const Home = () => {
@@ -96,31 +96,36 @@ const Home = () => {
         telefono: formData.telefono.trim(),
         talla: formData.talla,
         estado: formData.estado,
-        observaciones: formData.observaciones.trim()
+        observaciones: formData.observaciones.trim(),
       };
 
-
       console.log("📦 Datos:", dataToSend);
-      const API_BASE_URL =  'https://lostandfoundapi-kfe8.onrender.com/';
-    
+      const API_BASE_URL = "https://lostandfoundapi-kfe8.onrender.com/";
+
       // Asegurar que no haya doble slash
-      const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+      const baseUrl = API_BASE_URL.endsWith("/")
+        ? API_BASE_URL.slice(0, -1)
+        : API_BASE_URL;
 
       // Realizar la petición POST a tu API
       const response = await fetch(`${baseUrl}/prendas`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(dataToSend)
+        body: JSON.stringify(dataToSend),
       });
 
-      console.log("📡 Respuesta recibida:", response.status, response.statusText);
-      
+      console.log(
+        "📡 Respuesta recibida:",
+        response.status,
+        response.statusText
+      );
+
       // Obtener el texto de la respuesta
       const responseText = await response.text();
       console.log("📄 Texto de respuesta:", responseText);
-      
+
       let result;
       try {
         result = JSON.parse(responseText);
@@ -131,8 +136,11 @@ const Home = () => {
 
       if (response.ok) {
         // Éxito
-        showAlert(`¡Prenda registrada exitosamente! ID: ${result.id}`, "success");
-        
+        showAlert(
+          `¡Prenda registrada exitosamente! ID: ${result.id}`,
+          "success"
+        );
+
         // Resetear el formulario
         setFormData({
           nombre: "",
@@ -147,22 +155,38 @@ const Home = () => {
       } else {
         // Error del servidor
         console.error("❌ Error del servidor:", response.status, result);
-        
+
         if (response.status === 404) {
-          showAlert("Error: La ruta del servidor no fue encontrada. Verifique que el servidor esté configurado correctamente.", "error");
+          showAlert(
+            "Error: La ruta del servidor no fue encontrada. Verifique que el servidor esté configurado correctamente.",
+            "error"
+          );
         } else if (response.status === 409) {
-          showAlert("Ya existe una prenda similar registrada para este cliente", "warning");
+          showAlert(
+            "Ya existe una prenda similar registrada para este cliente",
+            "warning"
+          );
         } else {
-          showAlert(result.message || `Error del servidor: ${response.status}`, "error");
+          showAlert(
+            result.message || `Error del servidor: ${response.status}`,
+            "error"
+          );
         }
       }
-
     } catch (error) {
       console.error("💥 Error de conexión completo:", error);
       if (error instanceof Error && error.message.includes("Failed to fetch")) {
-        showAlert("Error: No se puede conectar al servidor. Verifique que esté ejecutándose en localhost:8000", "error");
+        showAlert(
+          "Error: No se puede conectar al servidor. Verifique que esté ejecutándose en localhost:8000",
+          "error"
+        );
       } else {
-        showAlert(`Error de conexión: ${error instanceof Error ? error.message : String(error)}`, "error");
+        showAlert(
+          `Error de conexión: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+          "error"
+        );
       }
     } finally {
       setIsLoading(false);
@@ -174,12 +198,19 @@ const Home = () => {
   };
 
   const handleCloseAlert = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
     setAlert({ ...alert, open: false });
   };
 
+  const formlabelstyle = {
+    fontSize: "1.1rem",
+    fontWeight: "bold",
+    color: "#1976d2",
+    mb: 2,
+    display: "block",
+  };
   // Estilos uniformes para TextField
   const uniformInputStyles = {
     "& .MuiOutlinedInput-root": {
@@ -222,7 +253,7 @@ const Home = () => {
               sx={{
                 backgroundColor: "#1976d2",
                 color: "white",
-                p: 3,
+                p: 2,
                 display: "flex",
                 alignItems: "center",
                 gap: 2,
@@ -237,6 +268,9 @@ const Home = () => {
             <CardContent sx={{ p: 4 }}>
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
+                  <Typography variant="body1" gutterBottom sx={formlabelstyle}>
+                    Ingrese Nombre Completo
+                  </Typography>
                   <TextField
                     fullWidth
                     label="Nombre Completo"
@@ -248,11 +282,16 @@ const Home = () => {
                     variant="outlined"
                     sx={uniformInputStyles}
                     error={formData.nombre.trim() === ""}
-                    helperText={formData.nombre.trim() === "" ? "Campo obligatorio" : ""}
+                    helperText={
+                      formData.nombre.trim() === "" ? "Campo obligatorio" : ""
+                    }
                     disabled={isLoading}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
+                  <Typography variant="body1" gutterBottom sx={formlabelstyle}>
+                    Ingresa rut sin puntos y con guión
+                  </Typography>
                   <TextField
                     fullWidth
                     label="RUT"
@@ -261,13 +300,19 @@ const Home = () => {
                     required
                     variant="outlined"
                     sx={uniformInputStyles}
+                    placeholder="17542466-2"
                     error={formData.rut.trim() === ""}
-                    helperText={formData.rut.trim() === "" ? "Campo obligatorio" : ""}
+                    helperText={
+                      formData.rut.trim() === "" ? "Campo obligatorio" : ""
+                    }
                     disabled={isLoading}
                   />
                 </Grid>
 
                 <Grid item xs={12} md={6}>
+                  <Typography variant="body1" gutterBottom sx={formlabelstyle}>
+                    Ingresa teléfono de contacto
+                  </Typography>
                   <TextField
                     fullWidth
                     required
@@ -280,12 +325,17 @@ const Home = () => {
                     variant="outlined"
                     sx={uniformInputStyles}
                     error={formData.telefono.trim() === ""}
-                    helperText={formData.telefono.trim() === "" ? "Campo obligatorio" : ""}
+                    helperText={
+                      formData.telefono.trim() === "" ? "Campo obligatorio" : ""
+                    }
                     disabled={isLoading}
                   />
                 </Grid>
 
                 <Grid item xs={12} md={6}>
+                  <Typography variant="body1" gutterBottom sx={formlabelstyle}>
+                    Ingresa Correo Electrónico
+                  </Typography>
                   <TextField
                     required
                     fullWidth
@@ -297,7 +347,9 @@ const Home = () => {
                     variant="outlined"
                     sx={uniformInputStyles}
                     error={formData.email.trim() === ""}
-                    helperText={formData.email.trim() === "" ? "Campo obligatorio" : ""}
+                    helperText={
+                      formData.email.trim() === "" ? "Campo obligatorio" : ""
+                    }
                     disabled={isLoading}
                   />
                 </Grid>
@@ -309,7 +361,7 @@ const Home = () => {
               sx={{
                 backgroundColor: "#1976d2",
                 color: "white",
-                p: 3,
+                p: 2,
                 display: "flex",
                 alignItems: "center",
                 gap: 2,
@@ -344,26 +396,43 @@ const Home = () => {
                         key={type}
                         label={type}
                         clickable={!isLoading}
-                        onClick={() => !isLoading && handleInputChange("tipo_prenda", type)}
-                        variant={formData.tipo_prenda === type ? "filled" : "outlined"}
-                        color={formData.tipo_prenda === type ? "primary" : "default"}
-                        icon={formData.tipo_prenda === type ? <CheckCircle /> : undefined}
+                        onClick={() =>
+                          !isLoading && handleInputChange("tipo_prenda", type)
+                        }
+                        variant={
+                          formData.tipo_prenda === type ? "filled" : "outlined"
+                        }
+                        color={
+                          formData.tipo_prenda === type ? "primary" : "default"
+                        }
+                        icon={
+                          formData.tipo_prenda === type ? (
+                            <CheckCircle />
+                          ) : undefined
+                        }
                         disabled={isLoading}
                         sx={{
                           height: "40px",
                           fontSize: "1rem",
-                          fontWeight: formData.tipo_prenda === type ? "bold" : "normal",
+                          fontWeight:
+                            formData.tipo_prenda === type ? "bold" : "normal",
                           opacity: isLoading ? 0.5 : 1,
                           "&:hover": {
                             backgroundColor:
-                              formData.tipo_prenda === type ? "#1976d2" : "#e3f2fd",
+                              formData.tipo_prenda === type
+                                ? "#1976d2"
+                                : "#e3f2fd",
                           },
                         }}
                       />
                     ))}
                   </Box>
                   {formData.tipo_prenda === "" && (
-                    <Typography variant="caption" color="error" sx={{ mt: 1, display: "block" }}>
+                    <Typography
+                      variant="caption"
+                      color="error"
+                      sx={{ mt: 1, display: "block" }}
+                    >
                       Debe seleccionar un tipo de prenda
                     </Typography>
                   )}
@@ -388,7 +457,9 @@ const Home = () => {
                     value={formData.talla}
                     exclusive
                     onChange={(event, newSize) =>
-                      !isLoading && newSize && handleInputChange("talla", newSize)
+                      !isLoading &&
+                      newSize &&
+                      handleInputChange("talla", newSize)
                     }
                     aria-label="selección de talla"
                     disabled={isLoading}
@@ -428,7 +499,11 @@ const Home = () => {
                     ))}
                   </ToggleButtonGroup>
                   {formData.talla === "" && (
-                    <Typography variant="caption" color="error" sx={{ mt: 1, display: "block" }}>
+                    <Typography
+                      variant="caption"
+                      color="error"
+                      sx={{ mt: 1, display: "block" }}
+                    >
                       Debe seleccionar una talla
                     </Typography>
                   )}
@@ -481,7 +556,11 @@ const Home = () => {
                     })}
                   </Box>
                   {formData.estado === "" && (
-                    <Typography variant="caption" color="error" sx={{ mt: 1, display: "block" }}>
+                    <Typography
+                      variant="caption"
+                      color="error"
+                      sx={{ mt: 1, display: "block" }}
+                    >
                       Debe seleccionar el estado de la prenda
                     </Typography>
                   )}
@@ -519,7 +598,13 @@ const Home = () => {
               <Button
                 variant="contained"
                 size="large"
-                startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <Save />}
+                startIcon={
+                  isLoading ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : (
+                    <Save />
+                  )
+                }
                 onClick={handleSave}
                 disabled={!isFormValid || isLoading}
                 sx={{
@@ -529,22 +614,33 @@ const Home = () => {
                   fontWeight: "bold",
                   borderRadius: 3,
                   minHeight: "56px",
-                  backgroundColor: isLoading ? "#ff9800" : isFormValid ? "#4caf50" : "#bdbdbd",
+                  backgroundColor: isLoading
+                    ? "#ff9800"
+                    : isFormValid
+                    ? "#4caf50"
+                    : "#bdbdbd",
                   "&:hover": {
-                    backgroundColor: isLoading ? "#f57c00" : isFormValid ? "#45a049" : "#bdbdbd",
+                    backgroundColor: isLoading
+                      ? "#f57c00"
+                      : isFormValid
+                      ? "#45a049"
+                      : "#bdbdbd",
                   },
                   "&:disabled": {
                     backgroundColor: isLoading ? "#ff9800" : "#e0e0e0",
                     color: isLoading ? "white" : "#9e9e9e",
                   },
                   transition: "all 0.3s ease",
-                  boxShadow: isFormValid && !isLoading ? "0 4px 12px rgba(76, 175, 80, 0.3)" : "none",
+                  boxShadow:
+                    isFormValid && !isLoading
+                      ? "0 4px 12px rgba(76, 175, 80, 0.3)"
+                      : "none",
                 }}
               >
-                {isLoading 
-                  ? "Guardando..." 
-                  : isFormValid 
-                  ? "Guardar Prenda" 
+                {isLoading
+                  ? "Guardando..."
+                  : isFormValid
+                  ? "Guardar Prenda"
                   : "Complete todos los campos"}
               </Button>
             </CardActions>
@@ -555,30 +651,30 @@ const Home = () => {
       {/* Loading Backdrop */}
       <Backdrop
         sx={{
-          color: '#fff',
+          color: "#fff",
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          backdropFilter: 'blur(4px)',
+          backdropFilter: "blur(4px)",
         }}
         open={isLoading}
       >
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             gap: 2,
           }}
         >
-          <CircularProgress 
-            size={60} 
-            color="inherit" 
+          <CircularProgress
+            size={60}
+            color="inherit"
             sx={{
-              '& .MuiCircularProgress-circle': {
-                strokeLinecap: 'round',
+              "& .MuiCircularProgress-circle": {
+                strokeLinecap: "round",
               },
             }}
           />
-          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
             Guardando prenda...
           </Typography>
           <Typography variant="body2" sx={{ opacity: 0.8 }}>
@@ -593,8 +689,8 @@ const Home = () => {
         autoHideDuration={6000}
         onClose={handleCloseAlert}
         anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
+          vertical: "bottom",
+          horizontal: "right",
         }}
       >
         <Alert
@@ -602,17 +698,17 @@ const Home = () => {
           severity={alert.severity}
           variant="filled"
           sx={{
-            width: '100%',
-            minWidth: '300px',
+            width: "100%",
+            minWidth: "300px",
             borderRadius: 2,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+            boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
           }}
         >
-          <AlertTitle sx={{ fontWeight: 'bold' }}>
-            {alert.severity === 'success' && '¡Éxito!'}
-            {alert.severity === 'error' && 'Error'}
-            {alert.severity === 'warning' && 'Advertencia'}
-            {alert.severity === 'info' && 'Información'}
+          <AlertTitle sx={{ fontWeight: "bold" }}>
+            {alert.severity === "success" && "¡Éxito!"}
+            {alert.severity === "error" && "Error"}
+            {alert.severity === "warning" && "Advertencia"}
+            {alert.severity === "info" && "Información"}
           </AlertTitle>
           {alert.message}
         </Alert>

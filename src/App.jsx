@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from "./Pages/Home"
 import IngresoPrendaPerdida from './Pages/IngresoPrendaPerdida';
 import Navbar from './Componentes/Navbar';
-
+import Footer from './Componentes/Footer'
 function App() {
   
 
@@ -18,6 +18,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/busqueda" element={<IngresoPrendaPerdida />} /> 
       </Routes>
+      <Footer/>
     </div>
   </Router>
 

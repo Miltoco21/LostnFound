@@ -61,16 +61,93 @@ const Home = () => {
   const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
   const CONDITIONS = ["Excelente", "Bueno", "Regular", "Dañado"];
 
+  // ===== FUNCIONES DE VALIDACIÓN RUT =====
+  const formatRUT = (value) => {
+    // Remover todo excepto números y K/k
+    const cleanValue = value.replace(/[^0-9kK]/g, '');
+    
+    if (cleanValue.length === 0) return '';
+    
+    // Si tiene más de 1 caracter, separar el dígito verificador
+    if (cleanValue.length > 1) {
+      const rut = cleanValue.slice(0, -1);
+      const dv = cleanValue.slice(-1).toLowerCase();
+      return `${rut}-${dv}`;
+    }
+    
+    return cleanValue;
+  };
+
+  const validateRUT = (rut) => {
+    if (!rut || rut.trim() === '') {
+      return { isValid: false, message: 'RUT es obligatorio' };
+    }
+
+    // Verificar formato básico (números-dígito)
+    const rutPattern = /^[0-9]+-[0-9kK]$/;
+    if (!rutPattern.test(rut)) {
+      return { 
+        isValid: false, 
+        message: 'Formato inválido. Use: 12345678-9' 
+      };
+    }
+
+    const [rutNumbers, dv] = rut.split('-');
+    
+    // Verificar longitud del RUT
+    if (rutNumbers.length < 7 || rutNumbers.length > 8) {
+      return { 
+        isValid: false, 
+        message: 'RUT debe tener entre 7 y 8 dígitos' 
+      };
+    }
+
+    // Calcular dígito verificador
+    let suma = 0;
+    let multiplicador = 2;
+    
+    // Recorrer de derecha a izquierda
+    for (let i = rutNumbers.length - 1; i >= 0; i--) {
+      suma += parseInt(rutNumbers.charAt(i)) * multiplicador;
+      multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+    }
+    
+    const resto = suma % 11;
+    const dvCalculado = resto === 0 ? '0' : resto === 1 ? 'k' : String(11 - resto);
+    
+    if (dv.toLowerCase() !== dvCalculado) {
+      return { 
+        isValid: false, 
+        message: 'Dígito verificador incorrecto' 
+      };
+    }
+
+    return { isValid: true, message: '' };
+  };
+
+  const getRUTValidation = () => {
+    return validateRUT(formData.rut);
+  };
+  // ===== FIN FUNCIONES RUT =====
+
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Validación mejorada que verifica todos los campos obligatorios
+  const handleRUTChange = (e) => {
+    const formatted = formatRUT(e.target.value);
+    handleInputChange("rut", formatted);
+  };
+
+  // Validación mejorada que incluye RUT
   const isFormValid = useMemo(() => {
+    const rutValidation = validateRUT(formData.rut);
+    
     return (
       formData.nombre.trim() !== "" &&
       formData.telefono.trim() !== "" &&
       formData.rut.trim() !== "" &&
+      rutValidation.isValid &&
       formData.email.trim() !== "" &&
       formData.tipo_prenda.trim() !== "" &&
       formData.talla.trim() !== "" &&
@@ -211,6 +288,7 @@ const Home = () => {
     mb: 2,
     display: "block",
   };
+  
   // Estilos uniformes para TextField
   const uniformInputStyles = {
     "& .MuiOutlinedInput-root": {
@@ -288,30 +366,47 @@ const Home = () => {
                     disabled={isLoading}
                   />
                 </Grid>
+                
+                {/* CAMPO RUT MEJORADO */}
                 <Grid item xs={12} md={6}>
                   <Typography variant="body1" gutterBottom sx={formlabelstyle}>
-                    Ingresa rut sin puntos y con guión
+                    Ingrese RUT sin puntos y con guión
                   </Typography>
                   <TextField
                     fullWidth
                     label="RUT"
                     value={formData.rut}
-                    onChange={(e) => handleInputChange("rut", e.target.value)}
+                    onChange={handleRUTChange}
                     required
                     variant="outlined"
                     sx={uniformInputStyles}
-                    placeholder="17542466-2"
-                    error={formData.rut.trim() === ""}
+                    placeholder="12345678-9"
+                    error={!getRUTValidation().isValid && formData.rut.trim() !== ""}
                     helperText={
-                      formData.rut.trim() === "" ? "Campo obligatorio" : ""
+                      formData.rut.trim() === "" 
+                        ? "Campo obligatorio" 
+                        : !getRUTValidation().isValid 
+                          ? getRUTValidation().message
+                          : "✓ RUT válido"
                     }
                     disabled={isLoading}
+                    inputProps={{ maxLength: 10 }}
+                    FormHelperTextProps={{
+                      sx: {
+                        color: getRUTValidation().isValid && formData.rut.trim() !== "" 
+                          ? "#4caf50" 
+                          : undefined,
+                        fontWeight: getRUTValidation().isValid && formData.rut.trim() !== "" 
+                          ? "bold" 
+                          : undefined,
+                      }
+                    }}
                   />
                 </Grid>
 
                 <Grid item xs={12} md={6}>
                   <Typography variant="body1" gutterBottom sx={formlabelstyle}>
-                    Ingresa teléfono de contacto
+                    Ingrese teléfono de contacto
                   </Typography>
                   <TextField
                     fullWidth
@@ -334,7 +429,7 @@ const Home = () => {
 
                 <Grid item xs={12} md={6}>
                   <Typography variant="body1" gutterBottom sx={formlabelstyle}>
-                    Ingresa Correo Electrónico
+                    Ingrese Correo Electrónico
                   </Typography>
                   <TextField
                     required
@@ -356,7 +451,7 @@ const Home = () => {
               </Grid>
             </CardContent>
 
-            {/* Sección Datos de la Prenda */}
+            {/* Resto del código sin cambios - continúa con las secciones de prenda */}
             <Box
               sx={{
                 backgroundColor: "#1976d2",
@@ -438,7 +533,7 @@ const Home = () => {
                   )}
                 </Grid>
 
-                {/* Selector de Talla con Toggle Buttons */}
+                {/* Selector de Talla */}
                 <Grid item xs={12}>
                   <FormLabel
                     component="legend"
@@ -509,7 +604,7 @@ const Home = () => {
                   )}
                 </Grid>
 
-                {/* Selector de Condición con Chips coloridos */}
+                {/* Selector de Estado */}
                 <Grid item xs={12}>
                   <FormLabel
                     component="legend"
@@ -566,20 +661,23 @@ const Home = () => {
                   )}
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid item xs={12}
+                >
                   <TextField
                     fullWidth
                     label="Observaciones"
                     multiline
                     rows={4}
+                    
                     value={formData.observaciones}
                     onChange={(e) =>
                       handleInputChange("observaciones", e.target.value)
                     }
-                    placeholder="Detalles adicionales, daños, reparaciones necesarias, etc."
+                    placeholder="Detalles adicionales, indicar rut y posición ."
                     variant="outlined"
                     disabled={isLoading}
                     sx={{
+                      width:"170%",
                       opacity: isLoading ? 0.5 : 1,
                     }}
                   />

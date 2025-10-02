@@ -700,6 +700,7 @@ const IngresoPrendaPerdida = () => {
   
     // Usar tu variable de entorno actual de Vite
     const baseUrl = API_BASE_URL
+    
   
     try {
       console.log("🔍 Iniciando búsqueda...");

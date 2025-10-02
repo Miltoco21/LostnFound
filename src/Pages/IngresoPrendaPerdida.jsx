@@ -795,7 +795,7 @@ const IngresoPrendaPerdida = () => {
       console.log("📋 RUT a buscar:", searchRut);
       
       // ✅ CORRECT ENDPOINT: Use /api/prendas/buscar
-      const response = await axios.get(`${baseUrl}/api/prendas/buscar`, {
+      const response = await axios.get(`${API_BASE_URL}/api/prendas/buscar`, {
         params: {
           rut: searchRut
         },

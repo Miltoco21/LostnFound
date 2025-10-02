@@ -700,13 +700,13 @@ const IngresoPrendaPerdida = () => {
   
     // Usar tu variable de entorno actual de Vite
     const baseUrl = API_BASE_URL
-    
+
   
     try {
       console.log("🔍 Iniciando búsqueda...");
       console.log("📋 RUT a buscar:", searchRut);
       console.log("🌐 URL API configurada:", baseUrl);
-      console.log("🔗 Endpoint completo:", `${baseUrl}/prendas/buscar?rut=${searchRut}`);
+      console.log("🔗 Endpoint completo:", `${baseUrl}prendas/buscar?rut=${searchRut}`);
       
       // ✅ CAMBIO IMPORTANTE: Usar /prendas/buscar en lugar de /prendas
       const response = await axios.get(`${baseUrl}/prendas/buscar`, {

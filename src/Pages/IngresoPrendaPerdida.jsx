@@ -708,7 +708,7 @@ const IngresoPrendaPerdida = () => {
       console.log("🔍 Iniciando búsqueda...");
       console.log("📋 RUT a buscar:", searchRut);
       console.log("🌐 URL API configurada:", baseUrl);
-      console.log("🔗 Endpoint completo:", `${baseUrl}prendas/buscar?rut=${searchRut}`);
+      console.log("🔗 Endpoint completo:", `${baseUrl}/prendas/buscar?rut=${searchRut}`);
       
       // ✅ CAMBIO IMPORTANTE: Usar /prendas/buscar en lugar de /prendas
       const response = await axios.get(`${baseUrl}/prendas/buscar`, {

@@ -704,6 +704,7 @@ const IngresoPrendaPerdida = () => {
 
   
     try {
+      console.log("baseUrl",baseUrl)
       console.log("🔍 Iniciando búsqueda...");
       console.log("📋 RUT a buscar:", searchRut);
       console.log("🌐 URL API configurada:", baseUrl);

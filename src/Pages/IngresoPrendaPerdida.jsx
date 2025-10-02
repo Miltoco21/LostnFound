@@ -689,6 +689,98 @@ const IngresoPrendaPerdida = () => {
   ];
 
   // Función para buscar prendas por RUT - CORREGIDA
+  // const handleSearch = async () => {
+  //   if (!searchRut.trim()) {
+  //     showAlert("Por favor ingrese un RUT para buscar", "error");
+  //     return;
+  //   }
+  
+  //   setSearchLoading(true);
+  //   setSearchPerformed(true);
+  
+  //   // Usar tu variable de entorno actual de Vite
+  //   const baseUrl = API_BASE_URL
+  //   console.log("baseUrl",baseUrl)
+
+  
+  //   try {
+  //     console.log("baseUrl",baseUrl)
+  //     console.log("🔍 Iniciando búsqueda...");
+  //     console.log("📋 RUT a buscar:", searchRut);
+  //     console.log("🌐 URL API configurada:", baseUrl);
+  //     console.log("🔗 Endpoint completo:", `${baseUrl}/api/prendas/buscar?rut=${searchRut}`);
+      
+  //     // ✅ CAMBIO IMPORTANTE: Usar /prendas/buscar en lugar de /prendas
+  //     const response = await axios.get(`${baseUrl}/api/prendas/buscar`, {
+  //       params: {
+  //         rut: searchRut
+  //       },
+  //       timeout: 30000,
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       }
+  //     });
+      
+  //     console.log("✅ Respuesta exitosa:");
+  //     console.log("   - Status:", response.status, response.statusText);
+  //     console.log("   - Datos recibidos:", response.data);
+  //     console.log("   - Cantidad de resultados:", Array.isArray(response.data) ? response.data.length : 'No es array');
+      
+  //     const results = Array.isArray(response.data) ? response.data : [];
+  //     setSearchResults(results);
+      
+  //     if (results.length === 0) {
+  //       showAlert("No se encontraron prendas para el RUT especificado", "info");
+  //       console.log("ℹ️ Sin resultados para RUT:", searchRut);
+  //     } else {
+  //       showAlert(`Se encontraron ${results.length} prenda(s) para el RUT ${searchRut}`, "success");
+  //       console.log(`✅ ${results.length} prenda(s) encontrada(s)`);
+  //     }
+      
+  //   } catch (error) {
+  //     console.error("💥 Error en búsqueda:", error);
+  //     console.error("🌐 URL que falló:", `${baseUrl}/prendas/buscar`);
+      
+  //     let errorMessage = "Error en la búsqueda";
+      
+  //     if (error.code === 'ECONNABORTED') {
+  //       errorMessage = "La búsqueda tardó demasiado. Intente nuevamente.";
+  //     } else if (error.response) {
+  //       console.error("📡 Respuesta de error:", {
+  //         status: error.response.status,
+  //         statusText: error.response.statusText,
+  //         data: error.response.data
+  //       });
+        
+  //       switch (error.response.status) {
+  //         case 404:
+  //           errorMessage = "Endpoint no encontrado. Verifique la URL del servidor.";
+  //           break;
+  //         case 500:
+  //           errorMessage = "Error interno del servidor";
+  //           break;
+  //         case 400:
+  //           errorMessage = "Solicitud inválida. Verifique el RUT";
+  //           break;
+  //         default:
+  //           errorMessage = `Error del servidor: ${error.response.status}`;
+  //       }
+  //     } else if (error.request) {
+  //       console.error("📡 Sin respuesta del servidor");
+  //       errorMessage = "No se pudo conectar con el servidor. Verifique su conexión.";
+  //     } else {
+  //       console.error("⚙️ Error de configuración:", error.message);
+  //       errorMessage = `Error de configuración: ${error.message}`;
+  //     }
+      
+  //     showAlert(errorMessage, "error");
+  //     setSearchResults([]);
+      
+  //   } finally {
+  //     setSearchLoading(false);
+  //     console.log("🏁 Búsqueda finalizada");
+  //   }
+  // };
   const handleSearch = async () => {
     if (!searchRut.trim()) {
       showAlert("Por favor ingrese un RUT para buscar", "error");
@@ -698,19 +790,11 @@ const IngresoPrendaPerdida = () => {
     setSearchLoading(true);
     setSearchPerformed(true);
   
-    // Usar tu variable de entorno actual de Vite
-    const baseUrl = API_BASE_URL
-    console.log("baseUrl",baseUrl)
-
-  
     try {
-      console.log("baseUrl",baseUrl)
       console.log("🔍 Iniciando búsqueda...");
       console.log("📋 RUT a buscar:", searchRut);
-      console.log("🌐 URL API configurada:", baseUrl);
-      console.log("🔗 Endpoint completo:", `${baseUrl}/api/prendas/buscar?rut=${searchRut}`);
       
-      // ✅ CAMBIO IMPORTANTE: Usar /prendas/buscar en lugar de /prendas
+      // ✅ CORRECT ENDPOINT: Use /api/prendas/buscar
       const response = await axios.get(`${baseUrl}/api/prendas/buscar`, {
         params: {
           rut: searchRut
@@ -721,55 +805,43 @@ const IngresoPrendaPerdida = () => {
         }
       });
       
-      console.log("✅ Respuesta exitosa:");
-      console.log("   - Status:", response.status, response.statusText);
-      console.log("   - Datos recibidos:", response.data);
-      console.log("   - Cantidad de resultados:", Array.isArray(response.data) ? response.data.length : 'No es array');
+      console.log("✅ Respuesta exitosa:", response.data);
       
-      const results = Array.isArray(response.data) ? response.data : [];
+      const results = Array.isArray(response.data.data) ? response.data.data : response.data;
       setSearchResults(results);
       
-      if (results.length === 0) {
+      if (!results || results.length === 0) {
         showAlert("No se encontraron prendas para el RUT especificado", "info");
-        console.log("ℹ️ Sin resultados para RUT:", searchRut);
       } else {
-        showAlert(`Se encontraron ${results.length} prenda(s) para el RUT ${searchRut}`, "success");
-        console.log(`✅ ${results.length} prenda(s) encontrada(s)`);
+        showAlert(`Se encontraron ${results.length} prenda(s)`, "success");
       }
       
     } catch (error) {
       console.error("💥 Error en búsqueda:", error);
-      console.error("🌐 URL que falló:", `${baseUrl}/prendas/buscar`);
       
       let errorMessage = "Error en la búsqueda";
       
       if (error.code === 'ECONNABORTED') {
         errorMessage = "La búsqueda tardó demasiado. Intente nuevamente.";
       } else if (error.response) {
-        console.error("📡 Respuesta de error:", {
-          status: error.response.status,
-          statusText: error.response.statusText,
-          data: error.response.data
-        });
+        console.error("📡 Respuesta de error:", error.response.data);
         
         switch (error.response.status) {
           case 404:
-            errorMessage = "Endpoint no encontrado. Verifique la URL del servidor.";
+            errorMessage = "Endpoint no encontrado. Verifique la configuración del servidor.";
             break;
           case 500:
             errorMessage = "Error interno del servidor";
             break;
           case 400:
-            errorMessage = "Solicitud inválida. Verifique el RUT";
+            errorMessage = error.response.data.message || "Solicitud inválida";
             break;
           default:
             errorMessage = `Error del servidor: ${error.response.status}`;
         }
       } else if (error.request) {
-        console.error("📡 Sin respuesta del servidor");
         errorMessage = "No se pudo conectar con el servidor. Verifique su conexión.";
       } else {
-        console.error("⚙️ Error de configuración:", error.message);
         errorMessage = `Error de configuración: ${error.message}`;
       }
       
@@ -778,7 +850,6 @@ const IngresoPrendaPerdida = () => {
       
     } finally {
       setSearchLoading(false);
-      console.log("🏁 Búsqueda finalizada");
     }
   };
 
